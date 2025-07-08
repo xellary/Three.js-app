@@ -28,7 +28,7 @@ const raycaster = new THREE.Raycaster();
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
-controls.minDistance = 20;          
+controls.minDistance = 10;          
 controls.maxDistance = 250;
 controls.minPolarAngle = 0;         
 controls.maxPolarAngle = Math.PI / 2
@@ -131,15 +131,25 @@ async function loadAndParse() {
       const diameter = parseFloat(hole.Diameter);
       const angle = parseFloat(hole.Angle);
       const azimuth = parseFloat(hole.Azimuth);
+      const t = hole.T;
       
       if (length === 0 || diameter === 0) {    //!!!
         return;
       }
+      
       const geometry = new THREE.CylinderGeometry(diameter / 2, diameter / 2, length, 16);
       geometry.translate(0, -length / 2, 0);
 
-      const material = new THREE.MeshBasicMaterial({ color: 0xe63946 });
-      const boreholeMesh = new THREE.Mesh(geometry, material);
+
+      let material;
+      let boreholeMesh;
+      if (t === "2") {
+        material = new THREE.MeshBasicMaterial({ color: 0x00b4d8 });
+        boreholeMesh = new THREE.Mesh(geometry, material);
+      } else {
+        material = new THREE.MeshBasicMaterial({ color: 0xe63946 });
+        boreholeMesh = new THREE.Mesh(geometry, material);
+      }
       
       boreholeMesh.position.set(x, y, z);
       const direction = getDirectionFromAngles(azimuth, angle);
