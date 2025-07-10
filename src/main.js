@@ -8,8 +8,10 @@ import { createBoreholes } from './boreholes.js';
 import { getMinCoords, getMaxCoords, normalizeBoreholes, normalizeReliefItems } from './helpers.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+import { createMousePick } from './mousePick.js';
+
 async function main() {
-  const data = await parseXML();
+  const data = await parseXML('data.xml');
   if (!data) {
     return;
   }
@@ -33,7 +35,7 @@ async function main() {
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
+  document.body.append(renderer.domElement);
 
   scene.add(new THREE.AmbientLight(0xffffff, 0.4));
   const dirLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -74,6 +76,17 @@ async function main() {
 
   camera.position.set(centerX + distance, centerY, centerZ);
   controls.target.set(centerX, centerY, centerZ);
+
+  reliefGroup.traverse(child => {
+    child.raycast = () => []; 
+  });
+  axesHelper.traverse(child => {
+    child.raycast = () => []; 
+  });
+
+  const pickSystem = createMousePick(renderer.domElement);
+  pickSystem.init(scene, camera); 
+ 
 
   animate();
 }

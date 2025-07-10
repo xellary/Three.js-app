@@ -1,8 +1,8 @@
 import { XMLParser } from 'fast-xml-parser';
 
-export async function parseXML() {
+export async function parseXML(fileName) {
   try {
-    const response = await fetch('data.xml');
+    const response = await fetch(fileName);
     const xmlText = await response.text();
 
     const parser = new XMLParser({
