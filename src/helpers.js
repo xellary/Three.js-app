@@ -35,18 +35,18 @@ export function getMaxCoords(boreholes, minCoords) {
 }
 
 export function normalizeBoreholes(boreholes, minCoords) {
-  return boreholes.map(h => ({
-    ...h,
-    ...normalizeCoordinates(h.X, h.Y, h.Z, minCoords),
+  return boreholes.map(hole => ({
+    ...hole,
+    ...normalizeCoordinates(hole.X, hole.Y, hole.Z, minCoords),
   }));
 }
 
 export function normalizeReliefItems(reliefItems, minCoords) {
-  return reliefItems.map(ri => ({
-    ...ri,
+  return reliefItems.map(item => ({
+    ...item,
     Points: {
-      P: ri.Points.P.map(p => 
-        normalizeCoordinates(p.X, p.Y, p.Z, minCoords)
+      P: item.Points.P.map(point => 
+        normalizeCoordinates(point.X, point.Y, point.Z, minCoords)
       )
     }
   }));

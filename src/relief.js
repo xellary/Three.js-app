@@ -4,8 +4,8 @@ import { Delaunay } from 'd3-delaunay';
 export function createRelief(reliefItems, reliefTypes) {
   const group = new THREE.Group();
 
-  const filteredReliefItems = reliefItems.filter(ri =>
-    ri.TID === reliefTypes[0].UID || ri.TID === reliefTypes[1].UID
+  const filteredReliefItems = reliefItems.filter(item =>
+    item.TID === reliefTypes[0].UID || item.TID === reliefTypes[1].UID
   );
 
   if (filteredReliefItems.length === 0) {
@@ -13,18 +13,18 @@ export function createRelief(reliefItems, reliefTypes) {
   }
 
   const lineMaterial = new THREE.LineBasicMaterial({ color: 0x688522 });
-  filteredReliefItems.forEach(ri => {
-    const points = ri.Points.P.map(p => new THREE.Vector3(p.X, p.Y, p.Z));
+  filteredReliefItems.forEach(item => {
+    const points = item.Points.P.map(point => new THREE.Vector3(point.X, point.Y, point.Z));
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const line = new THREE.Line(geometry, lineMaterial);
     group.add(line);
   });
   
-  const allPoints = filteredReliefItems.flatMap(ri =>
-    ri.Points.P.map(p => ({
-      x: p.X,
-      y: p.Y,
-      z: p.Z
+  const allPoints = filteredReliefItems.flatMap(item =>
+    item.Points.P.map(point => ({
+      x: point.X,
+      y: point.Y,
+      z: point.Z
     }))
   );
 
@@ -39,10 +39,10 @@ export function createRelief(reliefItems, reliefTypes) {
     }
   });
 
-  const delaunay = Delaunay.from(uniquePoints, p => p.x, p => p.y);
+  const delaunay = Delaunay.from(uniquePoints, point => point.x, point => point.y);
   const triangles = delaunay.triangles;
 
-  const positions = uniquePoints.flatMap(p => [p.x, p.y, p.z]);
+  const positions = uniquePoints.flatMap(point => [point.x, point.y, point.z]);
 
   const meshGeometry = new THREE.BufferGeometry();
   meshGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
