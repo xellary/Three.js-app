@@ -7,8 +7,7 @@ import { createRelief } from './relief.js';
 import { createBoreholes } from './boreholes.js';
 import { getMinCoords, getMaxCoords, normalizeBoreholes, normalizeReliefItems } from './helpers.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
-import { createMousePick } from './mousePick.js';
+import { createMouseHandler } from './mousePick.js';
 
 async function main() {
   const data = await parseXML('data.xml');
@@ -84,9 +83,8 @@ async function main() {
     child.raycast = () => []; 
   });
 
-  const pickSystem = createMousePick(renderer.domElement);
-  pickSystem.init(scene, camera); 
- 
+  const mouseHandler = createMouseHandler(renderer.domElement, controls);
+  mouseHandler.init(scene, camera); 
 
   animate();
 }

@@ -13,6 +13,7 @@ export function createBoreholes(boreholes) {
     const angle = parseFloat(hole.Angle);
     const azimuth = parseFloat(hole.Azimuth);
     const type = hole.T;
+    const name = hole.Name;
 
     if (!length || !diameter) {
         return;
@@ -21,15 +22,21 @@ export function createBoreholes(boreholes) {
     const geometry = new THREE.CylinderGeometry(diameter / 2, diameter / 2, length, 16);
     geometry.translate(0, -length / 2, 0);
 
-    let material;
-    if (type === "2") {
-        material = new THREE.MeshBasicMaterial({ color: 0x00b4d8 });
-    } else {
-        material = new THREE.MeshBasicMaterial({ color: 0xe63946 });
-    }
-
+    const material = new THREE.MeshStandardMaterial({ color: 0x00b4d8 });
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(x, y, z);
+
+    mesh.userData = {
+      type: type,
+      name: name,
+      x: x,
+      y: y,
+      z: z,
+      length: length,
+      diameter: diameter,
+      angle: angle,
+      azimuth: azimuth
+    };
 
     const direction = getDirectionFromAngles(azimuth, angle);
     const defaultAxis = new THREE.Vector3(0, 1, 0);
@@ -38,6 +45,6 @@ export function createBoreholes(boreholes) {
 
     group.add(mesh);
   });
-
+  
   return group;
 }
