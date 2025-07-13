@@ -7,7 +7,7 @@ import { createRelief } from './relief.js';
 import { createBoreholes } from './boreholes.js';
 import { getMinCoords, getMaxCoords, normalizeBoreholes, normalizeReliefItems } from './helpers.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { createMouseHandler } from './mousePick.js';
+import { createMouseHandler } from './mouseHandler.js';
 
 async function main() {
   const data = await parseXML('data.xml');
