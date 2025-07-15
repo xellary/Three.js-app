@@ -1,3 +1,10 @@
+:root {
+  --tooltip-back-color: #282828;
+  --tooltip-font-color: #ffffff;
+  --tooltip-plan-color: #ff0000;
+  --tooltip-actual-color: #ffff00;
+}
+
 body {
   padding: 0;
   margin: 0;
@@ -6,22 +13,44 @@ body {
 
 .tooltip {
   display: block;
-  background-color: #282828;
-  color: white;
+  padding: 0.5rem;
+  background-color: var(--tooltip-back-color);
+  color: var(--tooltip-font-color);
   z-index: 1;
   position: absolute;
-  top: 0;
-  left: 0;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 0.8rem;
   transform: translate(0, -110%);
   pointer-events: none;
 }
 
-.tooltip ul {
-  padding: 0.5rem;
-  margin: 0.5rem;
-  display: block;
-  list-style: none;
+.tooltip table {
+  border-spacing: 0;
+}
+
+.tooltip table tr td {
+  text-align: center;
+  padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+}
+
+.tooltip table tbody tr:first-child td {
+  padding-top: 0.4rem;
+}
+
+.tooltip table tr td:first-child {
+  text-align: left;
+  padding: 0.1rem 0.5rem 0.1rem 0;
+}
+
+.tooltip .name-header {
+  border-bottom: 3px solid var(--tooltip-back-color);
+  text-align: left;
+}
+
+.tooltip .actual-header {
+  border-bottom: 3px var(--tooltip-actual-color) solid;
+}
+.tooltip .plan-header {
+  border-bottom: 3px var(--tooltip-plan-color) solid;
 }

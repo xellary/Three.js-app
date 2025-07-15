@@ -45,9 +45,7 @@ export function createMouseHandler(canvas, controls) {
         }
       });
       if (relatedObjects.length > 0) {
-        const mainObj = relatedObjects[0];
-        mainObj.userData.relatedObjects = relatedObjects;
-        currentTooltip = showTooltip(mainObj, camera); 
+        currentTooltip = showTooltip(relatedObjects, camera); 
       }
     }
   }
