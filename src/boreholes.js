@@ -3,6 +3,7 @@ import { getDirectionFromAngles } from './helpers.js';
 
 export function createBoreholes(boreholes) {
   const group = new THREE.Group();
+  const boreholeColor = new THREE.Color(0x00b4d8);
 
   boreholes.forEach(hole => {
     const x = parseFloat(hole.X);
@@ -22,7 +23,7 @@ export function createBoreholes(boreholes) {
     const geometry = new THREE.CylinderGeometry(diameter / 2, diameter / 2, length, 16);
     geometry.translate(0, -length / 2, 0);
 
-    const material = new THREE.MeshStandardMaterial({ color: 0x00b4d8 });
+    const material = new THREE.MeshStandardMaterial({ color: boreholeColor });
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(x, y, z);
 
