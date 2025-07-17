@@ -1,9 +1,12 @@
 import * as THREE from 'three';
 import { getDirectionFromAngles } from './helpers.js';
+import { normalizeCoordinates } from './helpers.js';
+import { getMinCoords } from './helpers.js';
 
 export function createBoreholes(boreholes) {
   const group = new THREE.Group();
   const boreholeColor = new THREE.Color(0x00b4d8);
+  const minCoords = getMinCoords(boreholes);
 
   boreholes.forEach(hole => {
     const x = parseFloat(hole.X);
@@ -25,11 +28,10 @@ export function createBoreholes(boreholes) {
 
     const material = new THREE.MeshStandardMaterial({ color: boreholeColor });
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(x, y, z);
 
     mesh.userData = {
       type: type,
-      name: name,
+      name: name, 
       x: x,
       y: y,
       z: z,
@@ -38,6 +40,9 @@ export function createBoreholes(boreholes) {
       angle: angle,
       azimuth: azimuth
     };
+    
+    const normalizedCoords = normalizeCoordinates(x, y, z, minCoords);
+    mesh.position.set(normalizedCoords.X, normalizedCoords.Y, normalizedCoords.Z);
 
     const direction = getDirectionFromAngles(azimuth, angle);
     const defaultAxis = new THREE.Vector3(0, 1, 0);

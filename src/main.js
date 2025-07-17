@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { parseXML } from './parser.js';
 import { createRelief } from './relief.js';
 import { createBoreholes } from './boreholes.js';
-import { getMinCoords, getMaxCoords, normalizeBoreholes, normalizeReliefItems } from './helpers.js';
+import { getMinCoords, getMaxCoords, normalizeReliefItems } from './helpers.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createMouseHandler } from './mouseHandler.js';
 
@@ -18,11 +18,10 @@ async function main() {
   const { boreholes, reliefItems, reliefTypes } = data;
 
   const minCoords = getMinCoords(boreholes);
-  const normalizedBoreholes = normalizeBoreholes(boreholes, minCoords);
   const normalizedRelief = normalizeReliefItems(reliefItems, minCoords);
 
   const reliefGroup = createRelief(normalizedRelief, reliefTypes);
-  const boreholesGroup = createBoreholes(normalizedBoreholes);
+  const boreholesGroup = createBoreholes(boreholes);
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x25292e);
@@ -36,7 +35,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.append(renderer.domElement);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+  scene.add(new THREE.AmbientLight(0xffffff, 1));
   const dirLight = new THREE.DirectionalLight(0xffffff, 1);
   dirLight.position.set(100, 100, 100);
   scene.add(dirLight);

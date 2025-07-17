@@ -6,7 +6,6 @@ const ACTUAL_HEADER_CLASS = 'actual-header';
 const PLAN_HEADER_CLASS = 'plan-header';
 const ACTUAL_CELL_CLASS = 'actual-cell';
 const PLANNED_CELL_CLASS = 'planned-cell';
-const TABLE_CELL_CLASS = 'table-cell';
 
 export function showTooltip(objects, camera) {
     if (objects.length < 1) return null;
@@ -30,7 +29,7 @@ export function showTooltip(objects, camera) {
 }
 
 function parseUserData(obj) {
-    if (!obj?.userData) return {};
+    if (!obj?.userData) return null;
     
     return {
         name: obj.userData.name,
@@ -38,7 +37,11 @@ function parseUserData(obj) {
         diameter: obj.userData.diameter,
         azimuth: obj.userData.azimuth,
         angle: obj.userData.angle,
-        position: obj.position
+        position: {
+          x: obj.userData.x,
+          y: obj.userData.y,
+          z: obj.userData.z
+        }
     };
 }
 
@@ -66,11 +69,18 @@ function createTable(planned, actual) {
     const planPosition = formatPosition(planned.position);
     const actualPosition = formatPosition(actual?.position);
 
-    addTableRow(tableBody, "Длина", planned.length, actual?.length, hasActualData);
-    addTableRow(tableBody, "Диаметр", planDiameter, actualDiameter, hasActualData);
-    addTableRow(tableBody, "Азимут", planned.azimuth, actual?.azimuth, hasActualData);
-    addTableRow(tableBody, "Угол", planned.angle, actual?.angle, hasActualData);
-    addTableRow(tableBody, "XYZ", planPosition, actualPosition, hasActualData);
+    const rowsData = [
+    { label: 'Глубина', plan: planned.length, actual: actual?.length },
+    { label: 'Диаметр', plan: planDiameter, actual: actualDiameter },
+    { label: 'Азимут', plan: planned.azimuth, actual: actual?.azimuth },
+    { label: 'Угол', plan: planned.angle, actual: actual?.angle },
+    { label: 'XYZ', plan: planPosition, actual: actualPosition }
+    ];
+
+    rowsData.forEach(data => {
+        const row = createTableRow(data.label, data.plan, data.actual, hasActualData);
+        tableBody.append(row);
+    });
     
     table.append(tableBody);
     return table;
@@ -100,7 +110,7 @@ function createTableHeader(name, hasActualData) {
     return headerRow;
 }
 
-function addTableRow(table, property, planned, actual, hasActualData) {
+function createTableRow(property, planned, actual, hasActualData) {
     const row = document.createElement('tr');
     
     const propCell = document.createElement('td');
@@ -118,7 +128,7 @@ function addTableRow(table, property, planned, actual, hasActualData) {
         row.append(propCell, plannedCell);
     }
     
-    table.append(row);
+    return row;
 }
 
 function formatNumber(value, digits = 2) {

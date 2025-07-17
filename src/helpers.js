@@ -10,7 +10,7 @@ export function getDirectionFromAngles(azimuthDeg, angleDeg) {
   return new THREE.Vector3(x, y, z).normalize();
 }
 
-function normalizeCoordinates(x, y, z, minCoords) {
+export function normalizeCoordinates(x, y, z, minCoords) {
   return {
     X: parseFloat(x) - minCoords.x,
     Y: parseFloat(y) - minCoords.y,
@@ -34,13 +34,6 @@ export function getMaxCoords(boreholes, minCoords) {
   };
 }
 
-export function normalizeBoreholes(boreholes, minCoords) {
-  return boreholes.map(hole => ({
-    ...hole,
-    ...normalizeCoordinates(hole.X, hole.Y, hole.Z, minCoords),
-  }));
-}
-
 export function normalizeReliefItems(reliefItems, minCoords) {
   return reliefItems.map(item => ({
     ...item,
@@ -51,3 +44,4 @@ export function normalizeReliefItems(reliefItems, minCoords) {
     }
   }));
 }
+
