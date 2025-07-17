@@ -16,17 +16,37 @@ export function showTooltip(objects, camera) {
 
     const tooltip = document.createElement('div');
     tooltip.classList.add("tooltip");
-    const { x, y } = getScreenPosition(plannedObj, camera);
     
     const table = createTable(plannedData, actualData);
-    
     tooltip.append(table);
-    tooltip.style.left = `${x}px`;
-    tooltip.style.top = `${y}px`;
     document.body.append(tooltip);
+    
+    const { x, y } = getScreenPosition(plannedObj, camera);
+    const tooltipWidth = tooltip.offsetWidth;
+    const tooltipHeight = tooltip.offsetHeight;
+    
+    const padding = 10;
+    const offset = 20;
+    let adjustedX = x + offset;
+    if (x + tooltipWidth + offset > window.innerWidth) {
+        adjustedX = window.innerWidth - tooltipWidth - padding; 
+    } else if (x + offset < 0) {
+        adjustedX = padding;
+    }
+   
+    let adjustedY = y - tooltipHeight;
+    if (y + tooltipHeight + padding > window.innerHeight) {
+        adjustedY = window.innerHeight - tooltipHeight - padding;
+    } else if (y - tooltipHeight < 0) {
+        adjustedY = padding;
+    }
+
+    tooltip.style.left = `${adjustedX}px`;
+    tooltip.style.top = `${adjustedY}px`;
 
     return tooltip;
 }
+
 
 function parseUserData(obj) {
     if (!obj?.userData) return null;
