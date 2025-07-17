@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { parseXML } from './parser.js';
 import { createRelief } from './relief.js';
 import { createBoreholes } from './boreholes.js';
-import { getMinCoords, getMaxCoords, normalizeReliefItems } from './helpers.js';
+import { getMinCoords, getMaxCoords, normalizeReliefItems, normalizeCoordinates } from './helpers.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createMouseHandler } from './mouseHandler.js';
 
@@ -66,11 +66,12 @@ async function main() {
   scene.add(reliefGroup);
   scene.add(boreholesGroup);
 
-  const maxCoords = getMaxCoords(boreholes, minCoords);
-  const centerX = maxCoords.x / 2;
-  const centerY = maxCoords.y / 2;
-  const centerZ = maxCoords.z / 2;
-  const distance = Math.max(maxCoords.x, maxCoords.y, maxCoords.z);
+  const maxCoords = getMaxCoords(boreholes);
+  const normalizedCoords = normalizeCoordinates(maxCoords.x, maxCoords.y, maxCoords.z, minCoords);
+  const centerX = normalizedCoords.X / 2;
+  const centerY = normalizedCoords.Y / 2;
+  const centerZ = normalizedCoords.Z / 2;
+  const distance = Math.max(normalizedCoords.X, normalizedCoords.Y, normalizedCoords.Z);
 
   camera.position.set(centerX + distance, centerY, centerZ);
   controls.target.set(centerX, centerY, centerZ);

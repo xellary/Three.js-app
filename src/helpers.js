@@ -19,18 +19,34 @@ export function normalizeCoordinates(x, y, z, minCoords) {
 }
 
 export function getMinCoords(boreholes) {
+  const arrayX = boreholes.map(h => parseFloat(h.X));
+  const arrayY = boreholes.map(h => parseFloat(h.Y));
+  const arrayZ = boreholes.map(h => parseFloat(h.Z));
+
+  const minX = Math.min(...arrayX);
+  const minY = Math.min(...arrayY);
+  const minZ = Math.min(...arrayZ)
+
   return {
-    x: Math.min(...boreholes.map(h => parseFloat(h.X))),
-    y: Math.min(...boreholes.map(h => parseFloat(h.Y))),
-    z: Math.min(...boreholes.map(h => parseFloat(h.Z))),
+    x: minX,
+    y: minY,
+    z: minZ,
   };
 }
 
-export function getMaxCoords(boreholes, minCoords) {
+export function getMaxCoords(boreholes) {
+  const arrayX = boreholes.map(h => parseFloat(h.X));
+  const arrayY = boreholes.map(h => parseFloat(h.Y));
+  const arrayZ = boreholes.map(h => parseFloat(h.Z));
+
+  const maxX = Math.max(...arrayX);
+  const maxY = Math.max(...arrayY);
+  const maxZ = Math.max(...arrayZ);
+
   return {
-    x: Math.max(...boreholes.map(h => parseFloat(h.X) - minCoords.x)),
-    y: Math.max(...boreholes.map(h => parseFloat(h.Y) - minCoords.y)),
-    z: Math.max(...boreholes.map(h => parseFloat(h.Z) - minCoords.z)),
+    x: maxX,
+    y: maxY,
+    z: maxZ,
   };
 }
 
