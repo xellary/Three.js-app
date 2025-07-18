@@ -25,19 +25,20 @@ export function showTooltip(objects, camera) {
     const tooltipWidth = tooltip.offsetWidth;
     const tooltipHeight = tooltip.offsetHeight;
     
-    const padding = 10;
-    const offset = 20;
-    let adjustedX = x + offset;
-    if (x + tooltipWidth + offset > window.innerWidth) {
+    const padding = 5;
+    const offset = 10;
+    let adjustedX = x;
+    if (x + tooltipWidth + padding > window.innerWidth) {
         adjustedX = window.innerWidth - tooltipWidth - padding; 
-    } else if (x + offset < 0) {
+    } else if (x - padding < 0) {
         adjustedX = padding;
     }
-   
-    let adjustedY = y - tooltipHeight;
-    if (y + tooltipHeight + padding > window.innerHeight) {
+    
+    const resultY = y - tooltipHeight - offset;
+    let adjustedY = resultY;
+    if (resultY + padding > window.innerHeight) {
         adjustedY = window.innerHeight - tooltipHeight - padding;
-    } else if (y - tooltipHeight < 0) {
+    } else if (resultY - padding < 0) {
         adjustedY = padding;
     }
 
