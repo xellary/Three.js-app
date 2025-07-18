@@ -57,11 +57,7 @@ function parseUserData(obj) {
         diameter: obj.userData.diameter,
         azimuth: obj.userData.azimuth,
         angle: obj.userData.angle,
-        position: {
-          x: obj.userData.x,
-          y: obj.userData.y,
-          z: obj.userData.z
-        }
+        position: obj.userData.position
     };
 }
 

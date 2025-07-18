@@ -67,11 +67,11 @@ async function main() {
   scene.add(boreholesGroup);
 
   const maxCoords = getMaxCoords(boreholes);
-  const normalizedCoords = normalizeCoordinates(maxCoords.x, maxCoords.y, maxCoords.z, minCoords);
-  const centerX = normalizedCoords.X / 2;
-  const centerY = normalizedCoords.Y / 2;
-  const centerZ = normalizedCoords.Z / 2;
-  const distance = Math.max(normalizedCoords.X, normalizedCoords.Y, normalizedCoords.Z);
+  const normalizedCoords = normalizeCoordinates(maxCoords, minCoords);
+  const centerX = normalizedCoords.x / 2;
+  const centerY = normalizedCoords.y / 2;
+  const centerZ = normalizedCoords.z / 2;
+  const distance = Math.max(normalizedCoords.x, normalizedCoords.y, normalizedCoords.z);
 
   camera.position.set(centerX + distance, centerY, centerZ);
   controls.target.set(centerX, centerY, centerZ);

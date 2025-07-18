@@ -10,11 +10,11 @@ export function getDirectionFromAngles(azimuthDeg, angleDeg) {
   return new THREE.Vector3(x, y, z).normalize();
 }
 
-export function normalizeCoordinates(x, y, z, minCoords) {
+export function normalizeCoordinates(coords, minCoords) {
   return {
-    X: parseFloat(x) - minCoords.x,
-    Y: parseFloat(y) - minCoords.y,
-    Z: parseFloat(z) - minCoords.z,
+    x: parseFloat(coords.x) - minCoords.x,
+    y: parseFloat(coords.y) - minCoords.y,
+    z: parseFloat(coords.z) - minCoords.z,
   };
 }
 
@@ -54,9 +54,10 @@ export function normalizeReliefItems(reliefItems, minCoords) {
   return reliefItems.map(item => ({
     ...item,
     Points: {
-      P: item.Points.P.map(point => 
-        normalizeCoordinates(point.X, point.Y, point.Z, minCoords)
-      )
+      P: item.Points.P.map(point => {
+        const coords = new THREE.Vector3(point.X, point.Y, point.Z);
+        return normalizeCoordinates(coords, minCoords);
+      })
     }
   }));
 }

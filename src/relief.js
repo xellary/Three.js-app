@@ -16,7 +16,7 @@ export function createRelief(reliefItems, reliefTypes) {
 
   const lineMaterial = new THREE.LineBasicMaterial({ color: lineColor });
   filteredReliefItems.forEach(item => {
-    const points = item.Points.P.map(point => new THREE.Vector3(point.X, point.Y, point.Z));
+    const points = item.Points.P.map(point => new THREE.Vector3(point.x, point.y, point.z));
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const line = new THREE.Line(geometry, lineMaterial);
     group.add(line);
@@ -24,9 +24,9 @@ export function createRelief(reliefItems, reliefTypes) {
   
   const allPoints = filteredReliefItems.flatMap(item =>
     item.Points.P.map(point => ({
-      x: point.X,
-      y: point.Y,
-      z: point.Z
+      x: point.x,
+      y: point.y,
+      z: point.z
     }))
   );
 

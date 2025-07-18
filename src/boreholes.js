@@ -9,9 +9,7 @@ export function createBoreholes(boreholes) {
   const minCoords = getMinCoords(boreholes);
 
   boreholes.forEach(hole => {
-    const x = parseFloat(hole.X);
-    const y = parseFloat(hole.Y);
-    const z = parseFloat(hole.Z);
+    const coords = new THREE.Vector3(hole.X, hole.Y, hole.Z);
     const length = parseFloat(hole.Length);
     const diameter = parseFloat(hole.Diameter);
     const angle = parseFloat(hole.Angle);
@@ -32,17 +30,15 @@ export function createBoreholes(boreholes) {
     mesh.userData = {
       type: type,
       name: name, 
-      x: x,
-      y: y,
-      z: z,
+      position: coords,
       length: length,
       diameter: diameter,
       angle: angle,
-      azimuth: azimuth
+      azimuth: azimuth,
     };
     
-    const normalizedCoords = normalizeCoordinates(x, y, z, minCoords);
-    mesh.position.set(normalizedCoords.X, normalizedCoords.Y, normalizedCoords.Z);
+    const normalizedCoords = normalizeCoordinates(coords, minCoords);
+    mesh.position.set(normalizedCoords.x, normalizedCoords.y, normalizedCoords.z);
 
     const direction = getDirectionFromAngles(azimuth, angle);
     const defaultAxis = new THREE.Vector3(0, 1, 0);
