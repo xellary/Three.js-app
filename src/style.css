@@ -12,7 +12,8 @@ body {
 }
 
 .tooltip {
-  display: block;
+  display: flex;
+  gap: 0.5rem;
   padding: 0.5rem;
   background-color: var(--tooltip-back-color);
   color: var(--tooltip-font-color);
@@ -30,7 +31,7 @@ body {
 
 .tooltip table tr td {
   text-align: center;
-  padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+  padding: 0 0.5rem 0 0.5rem;
   white-space: nowrap;
 }
 
@@ -44,13 +45,45 @@ body {
 }
 
 .tooltip .name-header {
-  border-bottom: 3px solid var(--tooltip-back-color);
+  border-bottom: 3px var(--tooltip-back-color) solid;
   text-align: left;
 }
 
 .tooltip .actual-header {
   border-bottom: 3px var(--tooltip-actual-color) solid;
 }
+
 .tooltip .plan-header {
   border-bottom: 3px var(--tooltip-plan-color) solid;
+}
+
+.close-tooltip {
+  cursor: pointer;
+  pointer-events: initial;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.close-tooltip:hover {
+  opacity: 1;
+}
+
+.close-tooltip:before, .close-tooltip:after {
+  position: absolute;
+  left: 9px;
+  content: '';
+  height: 21px;
+  width: 2px;
+  background-color: var(--tooltip-font-color);
+}
+
+.close-tooltip:before {
+  transform: rotate(45deg);
+}
+
+.close-tooltip:after {
+  transform: rotate(-45deg);
 }

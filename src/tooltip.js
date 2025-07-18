@@ -6,8 +6,9 @@ const ACTUAL_HEADER_CLASS = 'actual-header';
 const PLAN_HEADER_CLASS = 'plan-header';
 const ACTUAL_CELL_CLASS = 'actual-cell';
 const PLANNED_CELL_CLASS = 'planned-cell';
+const CLOSE_CLASS = 'close-tooltip';
 
-export function showTooltip(objects, camera) {
+export function showTooltip(objects, camera, onCloseCallback) {
     if (objects.length < 1) return null;
 
     const [plannedObj, actualObj] = objects;
@@ -16,12 +17,30 @@ export function showTooltip(objects, camera) {
 
     const tooltip = document.createElement('div');
     tooltip.classList.add("tooltip");
-    
+
+    const closeButton = document.createElement('div');
+    closeButton.classList.add(CLOSE_CLASS);
+    closeButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        if (onCloseCallback) onCloseCallback();
+    });
+
     const table = createTable(plannedData, actualData);
-    tooltip.append(table);
+    tooltip.append(table, closeButton);
     document.body.append(tooltip);
     
-    const { x, y } = getScreenPosition(plannedObj, camera);
+    updatePosition(tooltip, plannedObj, camera);
+    
+    return {
+        element: tooltip,
+        targetObject: plannedObj,
+        updatePosition: (obj, cam) => updatePosition(tooltip, obj, cam),
+        remove: () => tooltip.remove()
+    };
+}
+
+function updatePosition(tooltip, obj, camera) {
+    const { x, y } = getScreenPosition(obj, camera);
     const tooltipWidth = tooltip.offsetWidth;
     const tooltipHeight = tooltip.offsetHeight;
     
@@ -36,7 +55,7 @@ export function showTooltip(objects, camera) {
     
     const resultY = y - tooltipHeight - offset;
     let adjustedY = resultY;
-    if (resultY + padding > window.innerHeight) {
+    if (resultY + tooltipHeight + padding > window.innerHeight) {
         adjustedY = window.innerHeight - tooltipHeight - padding;
     } else if (resultY - padding < 0) {
         adjustedY = padding;
@@ -44,8 +63,6 @@ export function showTooltip(objects, camera) {
 
     tooltip.style.left = `${adjustedX}px`;
     tooltip.style.top = `${adjustedY}px`;
-
-    return tooltip;
 }
 
 
@@ -91,7 +108,9 @@ function createTable(planned, actual) {
     { label: 'Диаметр', plan: planDiameter, actual: actualDiameter },
     { label: 'Азимут', plan: planned.azimuth, actual: actual?.azimuth },
     { label: 'Угол', plan: planned.angle, actual: actual?.angle },
-    { label: 'XYZ', plan: planPosition, actual: actualPosition }
+    { label: 'X', plan: planPosition.x, actual: actualPosition?.x },
+    { label: 'Y', plan: planPosition.y, actual: actualPosition?.y },
+    { label: 'Z', plan: planPosition.z, actual: actualPosition?.z }
     ];
 
     rowsData.forEach(data => {
@@ -154,5 +173,9 @@ function formatNumber(value, digits = 2) {
 
 function formatPosition(position) {
   if (!position) return null;
-  return `${formatNumber(position.x)}; ${formatNumber(position.y)}; ${formatNumber(position.z)}`;
+  return {
+    x: formatNumber(position.x),
+    y: formatNumber(position.y),
+    z: formatNumber(position.z)
+  }
 }
