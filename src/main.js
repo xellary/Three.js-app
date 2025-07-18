@@ -24,7 +24,7 @@ async function main() {
   const boreholesGroup = createBoreholes(boreholes);
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x25292e);
+  scene.background = new THREE.Color(0x393939);
 
   const fov = 60;
   const far = 10000;
