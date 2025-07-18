@@ -9,18 +9,11 @@ export function createMouseHandler(canvas, controls) {
   let pickedObjectsSavedColors = [];
   let currentTooltip = null; 
   let isInteractingWithControls = false;
-  let lastMouseEvent = null; 
 
-  function pick(scene, camera, event) {
+  function pick(scene, camera) {
     if (isInteractingWithControls) return;
     removeTooltip();
     restoreColors();
-
-    if (!event && lastMouseEvent) {
-      event = lastMouseEvent;
-      pickPosition.x = ((event.clientX - canvas.getBoundingClientRect().left) / canvas.width) * 2 - 1;
-      pickPosition.y = -((event.clientY - canvas.getBoundingClientRect().top) / canvas.height) * 2 + 1;
-    }
 
     raycaster.setFromCamera(pickPosition, camera);
     const intersects = raycaster.intersectObjects(scene.children, true);
@@ -77,7 +70,6 @@ export function createMouseHandler(canvas, controls) {
     const pos = getCanvasRelativePosition(event);
     pickPosition.x = (pos.x / canvas.width) * 2 - 1;
     pickPosition.y = (pos.y / canvas.height) * -2 + 1;
-    lastMouseEvent = event; 
     return pickPosition;
   }
 
@@ -91,8 +83,7 @@ export function createMouseHandler(canvas, controls) {
   function initEventListeners(scene, camera) {
     canvas.addEventListener('mousemove', (event) => {
       setPickPosition(event);
-      pick(scene, camera, event);
-
+      pick(scene, camera);
     });
 
     canvas.addEventListener('mouseout', clearPickPosition);
