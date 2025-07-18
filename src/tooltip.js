@@ -9,166 +9,166 @@ const PLANNED_CELL_CLASS = 'planned-cell';
 const CLOSE_CLASS = 'close-tooltip';
 
 export function showTooltip(objects, camera, onCloseCallback) {
-    if (objects.length < 1) return null;
+  if (objects.length < 1) return null;
 
-    const [plannedObj, actualObj] = objects;
-    const plannedData = parseUserData(plannedObj);
-    const actualData = actualObj ? parseUserData(actualObj) : null;
+  const [plannedObj, actualObj] = objects;
+  const plannedData = parseUserData(plannedObj);
+  const actualData = actualObj ? parseUserData(actualObj) : null;
 
-    const tooltip = document.createElement('div');
-    tooltip.classList.add("tooltip");
+  const tooltip = document.createElement('div');
+  tooltip.classList.add("tooltip");
 
-    const closeButton = document.createElement('div');
-    closeButton.classList.add(CLOSE_CLASS);
-    closeButton.addEventListener('click', (event) => {
-        event.stopPropagation();
-        if (onCloseCallback) onCloseCallback();
-    });
+  const closeButton = document.createElement('div');
+  closeButton.classList.add(CLOSE_CLASS);
+  closeButton.addEventListener('click', (event) => {
+    event.stopPropagation();
+    if (onCloseCallback) onCloseCallback();
+  });
 
-    const table = createTable(plannedData, actualData);
-    tooltip.append(table, closeButton);
-    document.body.append(tooltip);
-    
-    updatePosition(tooltip, plannedObj, camera);
-    
-    return {
-        element: tooltip,
-        targetObject: plannedObj,
-        updatePosition: (obj, cam) => updatePosition(tooltip, obj, cam),
-        remove: () => tooltip.remove()
-    };
+  const table = createTable(plannedData, actualData);
+  tooltip.append(table, closeButton);
+  document.body.append(tooltip);
+  
+  updatePosition(tooltip, plannedObj, camera);
+  
+  return {
+    element: tooltip,
+    targetObject: plannedObj,
+    updatePosition: (obj, cam) => updatePosition(tooltip, obj, cam),
+    remove: () => tooltip.remove()
+  };
 }
 
 function updatePosition(tooltip, obj, camera) {
-    const { x, y } = getScreenPosition(obj, camera);
-    const tooltipWidth = tooltip.offsetWidth;
-    const tooltipHeight = tooltip.offsetHeight;
-    
-    const padding = 5;
-    const offset = 10;
-    let adjustedX = x;
-    if (x + tooltipWidth + padding > window.innerWidth) {
-        adjustedX = window.innerWidth - tooltipWidth - padding; 
-    } else if (x - padding < 0) {
-        adjustedX = padding;
-    }
-    
-    const resultY = y - tooltipHeight - offset;
-    let adjustedY = resultY;
-    if (resultY + tooltipHeight + padding > window.innerHeight) {
-        adjustedY = window.innerHeight - tooltipHeight - padding;
-    } else if (resultY - padding < 0) {
-        adjustedY = padding;
-    }
+  const { x, y } = getScreenPosition(obj, camera);
+  const tooltipWidth = tooltip.offsetWidth;
+  const tooltipHeight = tooltip.offsetHeight;
+  
+  const padding = 5;
+  const offset = 10;
+  let adjustedX = x;
+  if (x + tooltipWidth + padding > window.innerWidth) {
+    adjustedX = window.innerWidth - tooltipWidth - padding; 
+  } else if (x - padding < 0) {
+    adjustedX = padding;
+  }
+  
+  const resultY = y - tooltipHeight - offset;
+  let adjustedY = resultY;
+  if (resultY + tooltipHeight + padding > window.innerHeight) {
+    adjustedY = window.innerHeight - tooltipHeight - padding;
+  } else if (resultY - padding < 0) {
+    adjustedY = padding;
+  }
 
-    tooltip.style.left = `${adjustedX}px`;
-    tooltip.style.top = `${adjustedY}px`;
+  tooltip.style.left = `${adjustedX}px`;
+  tooltip.style.top = `${adjustedY}px`;
 }
 
 
 function parseUserData(obj) {
-    if (!obj?.userData) return null;
-    
-    return {
-        name: obj.userData.name,
-        length: obj.userData.length,
-        diameter: obj.userData.diameter,
-        azimuth: obj.userData.azimuth,
-        angle: obj.userData.angle,
-        position: obj.userData.position
-    };
+  if (!obj?.userData) return null;
+  
+  return {
+    name: obj.userData.name,
+    length: obj.userData.length,
+    diameter: obj.userData.diameter,
+    azimuth: obj.userData.azimuth,
+    angle: obj.userData.angle,
+    position: obj.userData.position
+  };
 }
 
 function getScreenPosition(obj, camera) {
-    const worldPosition = new THREE.Vector3();
-    obj.getWorldPosition(worldPosition);
-    
-    const screenPosition = worldPosition.clone().project(camera);
-    return {
-        x: (screenPosition.x * 0.5 + 0.5) * window.innerWidth,
-        y: (screenPosition.y * -0.5 + 0.5) * window.innerHeight
-    };
+  const worldPosition = new THREE.Vector3();
+  obj.getWorldPosition(worldPosition);
+  
+  const screenPosition = worldPosition.clone().project(camera);
+  return {
+    x: (screenPosition.x * 0.5 + 0.5) * window.innerWidth,
+    y: (screenPosition.y * -0.5 + 0.5) * window.innerHeight
+  };
 }
 
 function createTable(planned, actual) {
-    const table = document.createElement('table');
-    const tableBody = document.createElement('tbody');
-    const hasActualData = actual !== null;
+  const table = document.createElement('table');
+  const tableBody = document.createElement('tbody');
+  const hasActualData = actual !== null;
 
-    const tableHeader = createTableHeader(planned.name, hasActualData);
-    table.append(tableHeader);
-    
-    const planDiameter = formatNumber(planned.diameter, 4);
-    const actualDiameter = formatNumber(actual?.diameter, 4);
-    const planPosition = formatPosition(planned.position);
-    const actualPosition = formatPosition(actual?.position);
+  const tableHeader = createTableHeader(planned.name, hasActualData);
+  table.append(tableHeader);
+  
+  const planDiameter = formatNumber(planned.diameter, 4);
+  const actualDiameter = formatNumber(actual?.diameter, 4);
+  const planPosition = formatPosition(planned.position);
+  const actualPosition = formatPosition(actual?.position);
 
-    const rowsData = [
-    { label: 'Глубина', plan: planned.length, actual: actual?.length },
-    { label: 'Диаметр', plan: planDiameter, actual: actualDiameter },
-    { label: 'Азимут', plan: planned.azimuth, actual: actual?.azimuth },
-    { label: 'Угол', plan: planned.angle, actual: actual?.angle },
-    { label: 'X', plan: planPosition.x, actual: actualPosition?.x },
-    { label: 'Y', plan: planPosition.y, actual: actualPosition?.y },
-    { label: 'Z', plan: planPosition.z, actual: actualPosition?.z }
-    ];
+  const rowsData = [
+  { label: 'Глубина', plan: planned.length, actual: actual?.length },
+  { label: 'Диаметр', plan: planDiameter, actual: actualDiameter },
+  { label: 'Азимут', plan: planned.azimuth, actual: actual?.azimuth },
+  { label: 'Угол', plan: planned.angle, actual: actual?.angle },
+  { label: 'X', plan: planPosition.x, actual: actualPosition?.x },
+  { label: 'Y', plan: planPosition.y, actual: actualPosition?.y },
+  { label: 'Z', plan: planPosition.z, actual: actualPosition?.z }
+  ];
 
-    rowsData.forEach(data => {
-        const row = createTableRow(data.label, data.plan, data.actual, hasActualData);
-        tableBody.append(row);
-    });
-    
-    table.append(tableBody);
-    return table;
+  rowsData.forEach(data => {
+    const row = createTableRow(data.label, data.plan, data.actual, hasActualData);
+    tableBody.append(row);
+  });
+  
+  table.append(tableBody);
+  return table;
 }
 
 function createTableHeader(name, hasActualData) {
-    const headerRow = document.createElement('tr');
-    headerRow.classList.add(HEADER_ROW_CLASS);
-    
-    const nameHeader = document.createElement('th');
-    nameHeader.textContent = `#${name}`;
-    nameHeader.classList.add(NAME_HEADER_CLASS);
+  const headerRow = document.createElement('tr');
+  headerRow.classList.add(HEADER_ROW_CLASS);
+  
+  const nameHeader = document.createElement('th');
+  nameHeader.textContent = `#${name}`;
+  nameHeader.classList.add(NAME_HEADER_CLASS);
 
-    const planHeader = document.createElement('th');
-    planHeader.textContent = "План";
-    planHeader.classList.add(PLAN_HEADER_CLASS);
-    
-    if (hasActualData) {
-        const actualHeader = document.createElement('th');
-        actualHeader.textContent = "Факт";
-        actualHeader.classList.add(ACTUAL_HEADER_CLASS);
-        headerRow.append(nameHeader, planHeader, actualHeader);
-    } else {
-        headerRow.append(nameHeader, planHeader);
-    }
-    
-    return headerRow;
+  const planHeader = document.createElement('th');
+  planHeader.textContent = "План";
+  planHeader.classList.add(PLAN_HEADER_CLASS);
+  
+  if (hasActualData) {
+    const actualHeader = document.createElement('th');
+    actualHeader.textContent = "Факт";
+    actualHeader.classList.add(ACTUAL_HEADER_CLASS);
+    headerRow.append(nameHeader, planHeader, actualHeader);
+  } else {
+    headerRow.append(nameHeader, planHeader);
+  }
+  
+  return headerRow;
 }
 
 function createTableRow(property, planned, actual, hasActualData) {
-    const row = document.createElement('tr');
-    
-    const propCell = document.createElement('td');
-    propCell.textContent = property;
-    const plannedCell = document.createElement('td');
-    plannedCell.textContent = planned;
-    plannedCell.classList.add(PLANNED_CELL_CLASS);
-    
-    if (hasActualData) {
-        const actualCell = document.createElement('td');
-        actualCell.textContent = actual;
-        actualCell.classList.add(ACTUAL_CELL_CLASS);
-        row.append(propCell, plannedCell, actualCell);
-    } else {
-        row.append(propCell, plannedCell);
-    }
-    
-    return row;
+  const row = document.createElement('tr');
+  
+  const propCell = document.createElement('td');
+  propCell.textContent = property;
+  const plannedCell = document.createElement('td');
+  plannedCell.textContent = planned;
+  plannedCell.classList.add(PLANNED_CELL_CLASS);
+  
+  if (hasActualData) {
+    const actualCell = document.createElement('td');
+    actualCell.textContent = actual;
+    actualCell.classList.add(ACTUAL_CELL_CLASS);
+    row.append(propCell, plannedCell, actualCell);
+  } else {
+    row.append(propCell, plannedCell);
+  }
+  
+  return row;
 }
 
 function formatNumber(value, digits = 2) {
-    return Number(value).toFixed(digits);
+  return Number(value).toFixed(digits);
 }
 
 function formatPosition(position) {
