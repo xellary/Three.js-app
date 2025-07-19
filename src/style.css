@@ -1,8 +1,8 @@
 :root {
   --tooltip-back-color: #282828;
   --tooltip-font-color: #ffffff;
-  --tooltip-plan-color: #ff0000;
-  --tooltip-actual-color: #ffff00;
+  --tooltip-plan-color: #5DADE2;
+  --tooltip-actual-color: #F39C12;
 }
 
 body {

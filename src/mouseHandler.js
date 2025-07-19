@@ -5,7 +5,7 @@ export function createMouseHandler(canvas, controls) {
   const raycaster = new THREE.Raycaster();
   const pickPosition = {x: 0, y: 0};
   let pickedObjects = [];
-  let pickedObjectsSavedColors = [];
+  let pickedObjectsSavedMaterials = []; 
   let currentTooltip = null;
   let isTooltipFixed = false;
   let mouseMoved = false;
@@ -17,7 +17,7 @@ export function createMouseHandler(canvas, controls) {
     
     if (!isTooltipFixed) {
       removeTooltip();
-      restoreColors();
+      restoreMaterials();
     }
 
     raycaster.setFromCamera(pickPosition, camera);
@@ -34,7 +34,7 @@ export function createMouseHandler(canvas, controls) {
         } else {
           isTooltipFixed = true;
           removeTooltip();
-          restoreColors();
+          restoreMaterials();
         }
       }
 
@@ -42,13 +42,20 @@ export function createMouseHandler(canvas, controls) {
       
       scene.traverse(obj => {
         if (obj.userData?.name === holeName) {
-          pickedObjectsSavedColors.push(obj.material.color.getHex());
+          pickedObjectsSavedMaterials.push({
+            color: obj.material.color.getHex(),
+            transparent: obj.material.transparent,
+            opacity: obj.material.opacity,
+          });
           pickedObjects.push(obj);
 
+          obj.material.transparent = false;
+          obj.material.opacity = 1.0;
+          
           if (obj.userData.type === "2") {
-            obj.material.color.setHex(0xFF0000); 
+            obj.material.color.setHex(0x1E90FF); 
           } else {
-            obj.material.color.setHex(0xFFFF00); 
+            obj.material.color.setHex(0xFF7514);
           }
 
           relatedObjects.push(obj); 
@@ -59,23 +66,26 @@ export function createMouseHandler(canvas, controls) {
         currentTooltip = showTooltip(relatedObjects, camera, () => {
           isTooltipFixed = false;
           removeTooltip();
-          restoreColors();
+          restoreMaterials();
         });
         currentTooltip.targetObject = relatedObjects[0];
         lastPickedObjectName = holeName;
       }
     } else if (!isTooltipFixed) {
-      restoreColors();
+      restoreMaterials();
       removeTooltip();
     }
   }
 
-  function restoreColors() {
+  function restoreMaterials() {
     pickedObjects.forEach((obj, i) => {
-      obj.material.color.setHex(pickedObjectsSavedColors[i]);
+      const saved = pickedObjectsSavedMaterials[i];
+      obj.material.color.setHex(saved.color);
+      obj.material.transparent = saved.transparent;
+      obj.material.opacity = saved.opacity;
     });
     pickedObjects = [];
-    pickedObjectsSavedColors = [];
+    pickedObjectsSavedMaterials = [];
     lastPickedObjectName = null;
   }
 
@@ -104,7 +114,7 @@ export function createMouseHandler(canvas, controls) {
     pickPosition.x = -100000;
     pickPosition.y = -100000;
     if (!isTooltipFixed) {
-      restoreColors();
+      restoreMaterials();
       removeTooltip();
     }
   }
@@ -133,7 +143,7 @@ export function createMouseHandler(canvas, controls) {
     controls.addEventListener('start', () => {
       isInteractingWithControls = true;
       if (!isTooltipFixed) {
-        restoreColors();
+        restoreMaterials();
         removeTooltip();
       }
     });

@@ -55,9 +55,10 @@ export function createRelief(reliefItems, reliefTypes) {
     color: reliefColor,
     side: THREE.DoubleSide,
     transparent: true,
-    opacity: 0.5,
+    opacity: 0.4,
     flatShading: true,
   });
+  meshMaterial.depthWrite = false;
 
   const mesh = new THREE.Mesh(meshGeometry, meshMaterial);
   group.add(mesh);

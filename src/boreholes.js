@@ -5,7 +5,8 @@ import { getMinCoords } from './helpers.js';
 
 export function createBoreholes(boreholes) {
   const group = new THREE.Group();
-  const boreholeColor = new THREE.Color(0x00b4d8);
+  const planColor = new THREE.Color(0x87CEEB);
+  const actualColor = new THREE.Color(0xF39C12);
   const minCoords = getMinCoords(boreholes);
 
   boreholes.forEach(hole => {
@@ -24,8 +25,17 @@ export function createBoreholes(boreholes) {
     const geometry = new THREE.CylinderGeometry(diameter / 2, diameter / 2, length, 16);
     geometry.translate(0, -length / 2, 0);
 
-    const material = new THREE.MeshStandardMaterial({ color: boreholeColor });
-    const mesh = new THREE.Mesh(geometry, material);
+    const planMaterial = new THREE.MeshStandardMaterial({
+      color: planColor,
+      transparent: true,
+      opacity: 0.6
+    });
+
+    const actualMaterial = new THREE.MeshBasicMaterial({
+      color: actualColor
+    });
+
+    const mesh = new THREE.Mesh(geometry, type === "2" ? planMaterial : actualMaterial);
 
     mesh.userData = {
       type: type,
