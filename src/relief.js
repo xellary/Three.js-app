@@ -4,7 +4,7 @@ import { Delaunay } from 'd3-delaunay';
 export function createRelief(reliefItems, reliefTypes) {
   const group = new THREE.Group();
   const reliefColor = new THREE.Color(0xA9D14B);
-  const lineColor = reliefColor.clone().offsetHSL(0, 0, -0.2);
+  const lineColor = reliefColor.clone().offsetHSL(0, 0, -0.25);
 
   const filteredReliefItems = reliefItems.filter(item =>
     item.TID === reliefTypes[0].UID || item.TID === reliefTypes[1].UID
@@ -55,7 +55,7 @@ export function createRelief(reliefItems, reliefTypes) {
     color: reliefColor,
     side: THREE.DoubleSide,
     transparent: true,
-    opacity: 0.4,
+    opacity: 0.35,
     flatShading: true,
   });
   meshMaterial.depthWrite = false;

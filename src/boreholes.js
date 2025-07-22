@@ -25,10 +25,10 @@ export function createBoreholes(boreholes) {
     const geometry = new THREE.CylinderGeometry(diameter / 2, diameter / 2, length, 16);
     geometry.translate(0, -length / 2, 0);
 
-    const planMaterial = new THREE.MeshStandardMaterial({
+    const planMaterial = new THREE.MeshBasicMaterial({
       color: planColor,
       transparent: true,
-      opacity: 0.6
+      opacity: 0.3
     });
 
     const actualMaterial = new THREE.MeshBasicMaterial({
