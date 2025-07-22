@@ -4,15 +4,13 @@ const HEADER_ROW_CLASS = 'header-row';
 const NAME_HEADER_CLASS = 'name-header';
 const ACTUAL_HEADER_CLASS = 'actual-header';
 const PLAN_HEADER_CLASS = 'plan-header';
-const ACTUAL_CELL_CLASS = 'actual-cell';
-const PLANNED_CELL_CLASS = 'planned-cell';
 const CLOSE_CLASS = 'close-tooltip';
 
 export function showTooltip(objects, camera, onCloseCallback) {
-  if (objects.length < 1) return null;
+  if (objects.length === 0) return null;
 
-  const [plannedObj, actualObj] = objects;
-  const plannedData = parseUserData(plannedObj);
+  const { plannedObj, actualObj } = classifyObjects(objects);
+  const plannedData = plannedObj ? parseUserData(plannedObj) : null;
   const actualData = actualObj ? parseUserData(actualObj) : null;
 
   const tooltip = document.createElement('div');
@@ -29,14 +27,28 @@ export function showTooltip(objects, camera, onCloseCallback) {
   tooltip.append(table, closeButton);
   document.body.append(tooltip);
   
-  updatePosition(tooltip, plannedObj, camera);
+  updatePosition(tooltip, plannedObj || actualObj, camera);
   
   return {
     element: tooltip,
-    targetObject: plannedObj,
+    targetObject: plannedObj || actualObj,
     updatePosition: (obj, cam) => updatePosition(tooltip, obj, cam),
     remove: () => tooltip.remove()
   };
+}
+
+function classifyObjects(objects) {
+  const result = { plannedObj: null, actualObj: null };
+
+  for (const obj of objects) {
+    if (obj.userData?.type === "2") {
+      result.plannedObj = obj;
+    } else {
+      result.actualObj = obj;
+    }
+  }
+
+  return result;
 }
 
 function updatePosition(tooltip, obj, camera) {
@@ -46,6 +58,7 @@ function updatePosition(tooltip, obj, camera) {
   
   const padding = 5;
   const offset = 10;
+
   let adjustedX = x;
   if (x + tooltipWidth + padding > window.innerWidth) {
     adjustedX = window.innerWidth - tooltipWidth - padding; 
@@ -64,7 +77,6 @@ function updatePosition(tooltip, obj, camera) {
   tooltip.style.left = `${adjustedX}px`;
   tooltip.style.top = `${adjustedY}px`;
 }
-
 
 function parseUserData(obj) {
   if (!obj?.userData) return null;
@@ -93,28 +105,36 @@ function getScreenPosition(obj, camera) {
 function createTable(planned, actual) {
   const table = document.createElement('table');
   const tableBody = document.createElement('tbody');
-  const hasActualData = actual !== null;
+  
+  const showPlanned = planned !== null;
+  const showActual = actual !== null;
+  const name = (planned || actual).name;
 
-  const tableHeader = createTableHeader(planned.name, hasActualData);
+  const tableHeader = createTableHeader(name, showPlanned, showActual);
   table.append(tableHeader);
   
-  const planDiameter = formatNumber(planned.diameter, 4);
-  const actualDiameter = formatNumber(actual?.diameter, 4);
-  const planPosition = formatPosition(planned.position);
+  if (showActual) {
+    actual.diameter = formatNumber(actual.diameter, 4);
+  } 
+  if (showPlanned) {
+    planned.diameter = formatNumber(planned.diameter, 4);
+  }
+
+  const planPosition = formatPosition(planned?.position);
   const actualPosition = formatPosition(actual?.position);
 
   const rowsData = [
-  { label: 'Глубина', plan: planned.length, actual: actual?.length },
-  { label: 'Диаметр', plan: planDiameter, actual: actualDiameter },
-  { label: 'Азимут', plan: planned.azimuth, actual: actual?.azimuth },
-  { label: 'Угол', plan: planned.angle, actual: actual?.angle },
-  { label: 'X', plan: planPosition.x, actual: actualPosition?.x },
-  { label: 'Y', plan: planPosition.y, actual: actualPosition?.y },
-  { label: 'Z', plan: planPosition.z, actual: actualPosition?.z }
+    createRowData('Глубина', 'length', planned, actual),
+    createRowData('Диаметр', 'diameter', planned, actual),
+    createRowData('Азимут', 'azimuth', planned, actual),
+    createRowData('Угол', 'angle', planned, actual),
+    createRowData('X', 'x', planPosition, actualPosition),
+    createRowData('Y', 'y', planPosition, actualPosition),
+    createRowData('Z', 'z', planPosition, actualPosition)
   ];
 
   rowsData.forEach(data => {
-    const row = createTableRow(data.label, data.plan, data.actual, hasActualData);
+    const row = createTableRow(data, showPlanned, showActual);
     tableBody.append(row);
   });
   
@@ -122,46 +142,49 @@ function createTable(planned, actual) {
   return table;
 }
 
-function createTableHeader(name, hasActualData) {
+function createTableHeader(name, showPlanned, showActual) {
   const headerRow = document.createElement('tr');
   headerRow.classList.add(HEADER_ROW_CLASS);
   
   const nameHeader = document.createElement('th');
   nameHeader.textContent = `#${name}`;
-  nameHeader.classList.add(NAME_HEADER_CLASS);
+  nameHeader.classList.add(NAME_HEADER_CLASS); 
+  headerRow.append(nameHeader);
 
-  const planHeader = document.createElement('th');
-  planHeader.textContent = "План";
-  planHeader.classList.add(PLAN_HEADER_CLASS);
+  if (showPlanned) {
+    const planHeader = document.createElement('th');
+    planHeader.textContent = "План";
+    planHeader.classList.add(PLAN_HEADER_CLASS);
+    headerRow.append(planHeader);
+  }
   
-  if (hasActualData) {
+  if (showActual) {
     const actualHeader = document.createElement('th');
     actualHeader.textContent = "Факт";
     actualHeader.classList.add(ACTUAL_HEADER_CLASS);
-    headerRow.append(nameHeader, planHeader, actualHeader);
-  } else {
-    headerRow.append(nameHeader, planHeader);
+    headerRow.append(actualHeader);
   }
   
   return headerRow;
 }
 
-function createTableRow(property, planned, actual, hasActualData) {
+function createTableRow(rowData, showPlanned, showActual) {
   const row = document.createElement('tr');
   
-  const propCell = document.createElement('td');
-  propCell.textContent = property;
-  const plannedCell = document.createElement('td');
-  plannedCell.textContent = planned;
-  plannedCell.classList.add(PLANNED_CELL_CLASS);
+  const property = document.createElement('td');
+  property.textContent = rowData.label;
+  row.append(property);
   
-  if (hasActualData) {
-    const actualCell = document.createElement('td');
-    actualCell.textContent = actual;
-    actualCell.classList.add(ACTUAL_CELL_CLASS);
-    row.append(propCell, plannedCell, actualCell);
-  } else {
-    row.append(propCell, plannedCell);
+  if (showPlanned) {
+    const planned = document.createElement('td');
+    planned.textContent = rowData.plan;
+    row.append(planned);
+  }
+  
+  if (showActual) {
+    const actual = document.createElement('td');
+    actual.textContent = rowData.actual;
+    row.append(actual);
   }
   
   return row;
@@ -178,4 +201,15 @@ function formatPosition(position) {
     y: formatNumber(position.y),
     z: formatNumber(position.z)
   }
+}
+
+function createRowData(label, field, planned, actual) {
+  const planValue = planned?.[field];
+  const actualValue = actual?.[field];
+  
+  return {
+    label,
+    plan: planValue,
+    actual: actualValue
+  };
 }
