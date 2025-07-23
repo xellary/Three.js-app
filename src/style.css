@@ -1,8 +1,8 @@
 :root {
-  --tooltip-back-color: #282828;
-  --tooltip-font-color: #ffffff;
-  --tooltip-plan-color: #5DADE2;
-  --tooltip-actual-color: #F39C12;
+  --interface-back-color: #282828;
+  --interface-font-color: #ffffff;
+  --plan-color: #5DADE2;
+  --actual-color: #F39C12;
 }
 
 body {
@@ -15,8 +15,8 @@ body {
   display: flex;
   gap: 0.5rem;
   padding: 0.5rem;
-  background-color: var(--tooltip-back-color);
-  color: var(--tooltip-font-color);
+  background-color: var(--interface-back-color);
+  color: var(--interface-font-color);
   z-index: 1;
   position: absolute;
   border-radius: 0.5rem;
@@ -45,16 +45,16 @@ body {
 }
 
 .tooltip .name-header {
-  border-bottom: 3px var(--tooltip-back-color) solid;
+  border-bottom: 3px var(--interface-back-color) solid;
   text-align: left;
 }
 
 .tooltip .actual-header {
-  border-bottom: 3px var(--tooltip-actual-color) solid;
+  border-bottom: 3px var(--actual-color) solid;
 }
 
 .tooltip .plan-header {
-  border-bottom: 3px var(--tooltip-plan-color) solid;
+  border-bottom: 3px var(--plan-color) solid;
 }
 
 .close-tooltip {
@@ -77,7 +77,7 @@ body {
   content: '';
   height: 21px;
   width: 2px;
-  background-color: var(--tooltip-font-color);
+  background-color: var(--interface-font-color);
 }
 
 .close-tooltip:before {
@@ -86,4 +86,46 @@ body {
 
 .close-tooltip:after {
   transform: rotate(-45deg);
+}
+
+.legend {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(40, 40, 40, 0.9);
+  padding: 0.6rem;
+  border-radius: 0.5rem;
+  color: var(--interface-font-color);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.legend-title {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.legend-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.legend-color {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.legend-plan {
+  border-radius: 0.1rem;
+  background-color: var(--plan-color);
+  opacity: 0.5;
+}
+
+.legend-actual {
+  border-radius: 0.1rem;
+  background-color: var(--actual-color);
 }

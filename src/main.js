@@ -8,6 +8,7 @@ import { createBoreholes } from './boreholes.js';
 import { getMinCoords, getMaxCoords, normalizeReliefItems, normalizeCoordinates } from './helpers.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createMouseHandler } from './mouseHandler.js';
+import { createLegend } from './legend.js';
 
 async function main() {
   const data = await parseXML('data.xml');
@@ -76,9 +77,13 @@ async function main() {
   camera.position.set(centerX + distance, centerY, centerZ);
   controls.target.set(centerX, centerY, centerZ);
 
+  const legend = createLegend();
+  document.body.append(legend);
+
   reliefGroup.traverse(child => {
     child.raycast = () => []; 
   });
+  
   axesHelper.traverse(child => {
     child.raycast = () => []; 
   });
