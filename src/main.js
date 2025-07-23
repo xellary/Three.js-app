@@ -1,14 +1,14 @@
-import './style.css';
+import './styles/style.css';
 
 import * as THREE from 'three';
 
-import { parseXML } from './parser.js';
+import { parseXML } from './utils/parser.js';
 import { createRelief } from './relief.js';
 import { createBoreholes } from './boreholes.js';
-import { getMinCoords, getMaxCoords, normalizeReliefItems, normalizeCoordinates } from './helpers.js';
+import { getMinCoords, getMaxCoords, normalizeReliefItems, normalizeCoordinates } from './utils/helpers.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createMouseHandler } from './mouseHandler.js';
-import { createLegend } from './legend.js';
+import { createLegend } from './ui/legend.js';
 
 async function main() {
   const data = await parseXML('data.xml');
@@ -83,7 +83,7 @@ async function main() {
   reliefGroup.traverse(child => {
     child.raycast = () => []; 
   });
-  
+
   axesHelper.traverse(child => {
     child.raycast = () => []; 
   });

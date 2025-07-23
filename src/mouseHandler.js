@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { showTooltip } from './tooltip';
+import { showTooltip } from './ui/tooltip';
 
 export function createMouseHandler(canvas, controls) {
   const raycaster = new THREE.Raycaster();

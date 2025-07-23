@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { getDirectionFromAngles } from './helpers.js';
-import { normalizeCoordinates } from './helpers.js';
-import { getMinCoords } from './helpers.js';
+import { getDirectionFromAngles } from './utils/helpers.js';
+import { normalizeCoordinates } from './utils/helpers.js';
+import { getMinCoords } from './utils/helpers.js';
 
 export function createBoreholes(boreholes) {
   const group = new THREE.Group();
